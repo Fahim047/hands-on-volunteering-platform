@@ -1,5 +1,11 @@
+import UpComingEventSection from '@/components/sections/UpComingEventSection';
+
 const HomePage = () => {
-	return <div>homepage</div>;
+	return (
+		<div className="py-12">
+			<UpComingEventSection />
+		</div>
+	);
 };
 
 export default HomePage;
