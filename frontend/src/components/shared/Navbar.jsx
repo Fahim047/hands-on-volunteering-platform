@@ -59,10 +59,10 @@ const Navbar = ({ user }) => {
 						) : (
 							<div className="flex items-center space-x-4">
 								<Button asChild variant="outline">
-									<Link to="/login">Log in</Link>
+									<Link to="/sign-in">Log in</Link>
 								</Button>
 								<Button asChild className="bg-indigo-600 hover:bg-indigo-700">
-									<Link to="/register">Sign up</Link>
+									<Link to="/sign-up">Sign up</Link>
 								</Button>
 							</div>
 						)}
@@ -150,10 +150,10 @@ const Navbar = ({ user }) => {
 						<div className="px-4 pt-4 pb-3 border-t border-gray-200">
 							<div className="space-x-2">
 								<Button asChild variant="outline">
-									<Link to="/login">Log in</Link>
+									<Link to="/sign-in">Log in</Link>
 								</Button>
 								<Button asChild className="bg-indigo-600 hover:bg-indigo-700">
-									<Link to="/register">Sign up</Link>
+									<Link to="/sign-up">Sign up</Link>
 								</Button>
 							</div>
 						</div>
