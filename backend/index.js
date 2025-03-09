@@ -1,8 +1,8 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
-import { PORT } from './src/config/env.js';
 import connectMongo from './src/config/mongodb.js';
+import errorMiddleware from './src/middlewares/error.middleware.js';
 
 const app = express();
 
@@ -12,17 +12,29 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Routes
+import { PORT } from './src/config/env.js';
 import authRouter from './src/routes/auth.routes.js';
 
 app.use('/api/v1/auth', authRouter);
 
+app.use(errorMiddleware);
+
 app.get('/', async (req, res) => {
 	res.send('Hello World');
 });
-
-app.listen(PORT, async () => {
-	console.log(`Listening on port ${PORT}`);
-	await connectMongo();
-});
+const port = PORT || 8000;
+connectMongo()
+	.then(() => {
+		app.on('error', (err) => {
+			console.log('Error happened in the server: ', err);
+			throw err;
+		});
+		app.listen(port, () => {
+			console.log(`Server is running on port ${port}`);
+		});
+	})
+	.catch((err) => {
+		console.error('MongoDB connection failed: ', err);
+	});
 
 export default app;
