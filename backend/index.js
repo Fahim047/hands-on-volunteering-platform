@@ -3,6 +3,7 @@ import cors from 'cors';
 import express from 'express';
 import pool from './src/config/db.js';
 import { PORT } from './src/config/env.js';
+import { createUserTable } from './src/models/user.model.js';
 
 const app = express();
 
@@ -11,8 +12,12 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Create tables
+createUserTable();
+
 // Routes
 import authRouter from './src/routes/auth.routes.js';
+
 app.use('/api/v1/auth', authRouter);
 
 app.get('/', async (req, res) => {
