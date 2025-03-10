@@ -39,7 +39,7 @@ export const signUp = async (req, res, next) => {
 	session.startTransaction();
 
 	try {
-		const { name, email, password } = req.body;
+		const { name, email, password, skills, interests } = req.body;
 		// check if user already exist
 		const isUserExist = await User.findOne({ email });
 		if (isUserExist) {
@@ -52,7 +52,15 @@ export const signUp = async (req, res, next) => {
 		const hashedPassword = await bcrypt.hash(password, salt);
 		// create user
 		const newUsers = await User.create(
-			[{ name, email, password: hashedPassword }],
+			[
+				{
+					name,
+					email,
+					password: hashedPassword,
+					skills: skills || [],
+					interests: interests || [],
+				},
+			],
 			{ session }
 		);
 		const token = jwt.sign({ userId: newUsers[0]._id }, JWT_SECRET, {

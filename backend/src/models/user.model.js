@@ -22,6 +22,18 @@ const userSchema = new mongoose.Schema(
 			required: true,
 			min: [6, 'Password must be at least 6 characters'],
 		},
+		skills: [
+			{
+				type: String,
+				trim: true,
+			},
+		],
+		interests: [
+			{
+				type: String,
+				trim: true,
+			},
+		],
 	},
 	{ timestamps: true }
 );
