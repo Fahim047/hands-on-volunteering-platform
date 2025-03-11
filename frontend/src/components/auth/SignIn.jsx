@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/hooks';
 import axios from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -26,6 +27,7 @@ import { toast } from 'sonner';
 const SignIn = () => {
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
+	const { setUser } = useAuth();
 
 	const form = useForm({
 		defaultValues: {
@@ -43,12 +45,13 @@ const SignIn = () => {
 				`${import.meta.env.VITE_API_BASE_URL}/auth/sign-in`,
 				data
 			);
-
+			setUser(response.data?.data?.user);
 			toast.success(response.data?.message || 'Sign in successful!');
 			navigate('/');
 		} catch (error) {
 			console.error('Sign in error:', error.response?.data || error.message);
-			toast.error(error.response?.data?.message || 'Something went wrong!');
+
+			toast.error(error.response?.data?.error || 'Something went wrong!');
 		} finally {
 			setLoading(false);
 		}

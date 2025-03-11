@@ -1,9 +1,15 @@
+import { useAuth } from '@/hooks';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const { user, setUser } = useAuth();
+
+	const handleLogout = () => {
+		setUser(null);
+	};
 
 	return (
 		<nav className="bg-white shadow-sm">
@@ -48,13 +54,20 @@ const Navbar = ({ user }) => {
 								<Link to="/profile" className="flex items-center">
 									<img
 										className="h-8 w-8 rounded-full"
-										src={user.avatar || 'https://via.placeholder.com/40'}
+										src={user.avatar || 'https://placehold.co/40'}
 										alt="User avatar"
 									/>
 									<span className="ml-2 text-sm font-medium text-gray-700">
 										{user.name}
 									</span>
 								</Link>
+								<Button
+									variant="destructive"
+									className="cursor-pointer"
+									onClick={handleLogout}
+								>
+									Logout
+								</Button>
 							</div>
 						) : (
 							<div className="flex items-center space-x-4">
@@ -139,11 +152,17 @@ const Navbar = ({ user }) => {
 									</div>
 								</div>
 							</div>
-							<div className="mt-3 space-y-1">
+							<div className="p-4 mt-3 space-y-1 space-x-2">
 								<Button asChild>
 									<Link to="/profile">Your Profile</Link>
 								</Button>
-								<Button>Sign out</Button>
+								<Button
+									variant="destructive"
+									className="cursor-pointer"
+									onClick={handleLogout}
+								>
+									Logout
+								</Button>
 							</div>
 						</div>
 					) : (
