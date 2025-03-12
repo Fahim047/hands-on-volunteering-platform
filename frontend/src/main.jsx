@@ -1,3 +1,4 @@
+import HomePage from '@/pages/Homepage.jsx';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router';
@@ -5,7 +6,6 @@ import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
 import './index.css';
 import MainLayout from './layouts/MainLayout';
-import HomePage from './pages/Homepage.jsx';
 import AuthProvider from './providers/AuthProvider';
 createRoot(document.getElementById('root')).render(
 	<StrictMode>
