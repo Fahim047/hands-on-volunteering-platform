@@ -1,4 +1,4 @@
-import HomePage from '@/pages/Homepage.jsx';
+import HomePage from '@/pages/HomePage.jsx';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router';
