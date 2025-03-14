@@ -46,3 +46,12 @@ export const createEvent = asyncHandler(async (req, res, next) => {
 		data: newEvent,
 	});
 });
+
+export const getEvents = asyncHandler(async (req, res, next) => {
+	const events = await Event.find().lean();
+
+	res.status(200).json({
+		success: true,
+		data: events,
+	});
+});
