@@ -2,35 +2,47 @@ import mongoose from 'mongoose';
 
 const eventSchema = new mongoose.Schema(
 	{
-		// title, description, date, time, location, and category
 		author: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
-			req: true,
+			required: true,
 		},
 		title: {
 			type: String,
 			required: true,
 			trim: true,
-			min: [2, 'Event title must be at least 2 characters'],
-			max: [100, 'Event title must be at most 100 characters'],
+			minlength: [2, 'Event title must be at least 2 characters'],
+			maxlength: [100, 'Event title must be at most 100 characters'],
 		},
 		description: {
 			type: String,
-			trim: true,
 			required: true,
+			trim: true,
 		},
 		date: {
-			type: String,
+			type: Date,
 			required: true,
 		},
-		time: {
+		startTime: {
 			type: String,
 			required: true,
+			match: [/^([0-9]{2}):([0-9]{2})$/, 'Invalid time format (HH:MM)'],
+		},
+		endTime: {
+			type: String,
+			required: true,
+			match: [/^([0-9]{2}):([0-9]{2})$/, 'Invalid time format (HH:MM)'],
+			validate: {
+				validator: function (value) {
+					return this.startTime < value;
+				},
+				message: 'End time must be after start time',
+			},
 		},
 		location: {
 			type: String,
 			required: true,
+			trim: true,
 		},
 		category: {
 			type: String,
@@ -41,5 +53,4 @@ const eventSchema = new mongoose.Schema(
 );
 
 const Event = mongoose.model('Event', eventSchema);
-
 export default Event;
