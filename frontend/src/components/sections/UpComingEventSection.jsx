@@ -1,39 +1,20 @@
 import { Link } from 'react-router';
 import EventCard from '../events/EventCard';
 import { Button } from '../ui/button';
+
 const sampleEvents = [
 	{
-		id: 1,
-		title: 'Beach Cleanup Drive',
-		category: 'Environment',
-		date: '2025-03-15',
-		location: 'Sunset Beach',
-		description:
-			'Join us for a community beach cleanup to protect our oceans and marine life. Bring gloves and sun protection!',
-		attendees: Array(18).fill({}),
-		imageUrl: 'https://placehold.co/800x400',
-	},
-	{
-		id: 2,
-		title: 'After-School Tutoring',
-		category: 'Education',
-		date: '2025-03-10',
-		location: 'Central Library',
-		description:
-			'Help elementary school students with homework and reading. No experience necessary, just patience and enthusiasm!',
-		attendees: Array(12).fill({}),
-		imageUrl: 'https://placehold.co/800x400',
-	},
-	{
-		id: 3,
-		title: 'Food Bank Distribution',
-		category: 'Food Security',
-		date: '2025-03-20',
-		location: 'Community Center',
-		description:
-			'Help pack and distribute food boxes to families in need. Morning and afternoon shifts available.',
-		attendees: Array(25).fill({}),
-		imageUrl: 'https://placehold.co/800x400',
+		author: '67ce575796c04c2699cd8227',
+		category: 'Healthcare',
+		createdAt: '2025-03-14T02:54:16.952Z',
+		date: '2025-03-24T18:00:00.000Z',
+		description: 'We are arranging a free blood donation camp.',
+		endTime: '16:00',
+		id: '67d39a588939cbc989e24938',
+		location: 'GSTU, Gopalganj',
+		startTime: '08:00',
+		title: 'Blood Donation',
+		updatedAt: '2025-03-14T02:54:16.952Z',
 	},
 ];
 const UpComingEventSection = () => {

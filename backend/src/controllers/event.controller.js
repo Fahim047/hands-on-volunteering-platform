@@ -1,5 +1,6 @@
 import Event from '../models/event.model.js';
 import asyncHandler from '../utils/asyncHandler.js';
+import { removeMongoDBIdFromArray } from '../utils/mongo-utils.js';
 
 export const createEvent = asyncHandler(async (req, res, next) => {
 	// const session = await mongoose.startSession();
@@ -48,10 +49,12 @@ export const createEvent = asyncHandler(async (req, res, next) => {
 });
 
 export const getEvents = asyncHandler(async (req, res, next) => {
-	const events = await Event.find().lean();
+	const events = await Event.find().select('-__v').lean();
+
+	const processedEvents = removeMongoDBIdFromArray(events);
 
 	res.status(200).json({
 		success: true,
-		data: events,
+		data: processedEvents,
 	});
 });
