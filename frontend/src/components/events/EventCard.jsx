@@ -42,10 +42,7 @@ const EventCard = ({ event }) => {
 				<p className="text-sm text-gray-500 mb-3">
 					<span className="flex items-center">
 						<Clock className="size-5 mr-1" />
-						<span>
-							{/* {event.startTime} - {event.endTime} */}
-							{event.time || 'TBD'}
-						</span>
+						<span>{`${event.startTime} - ${event.endTime}`}</span>
 					</span>
 				</p>
 				<p className="text-sm text-gray-500 mb-3">
@@ -59,7 +56,7 @@ const EventCard = ({ event }) => {
 				</p>
 				<div className="flex justify-between items-center">
 					<div className="text-sm text-gray-500">
-						<span className="font-medium">{event.attendees.length}</span>{' '}
+						<span className="font-medium">{event?.attendees?.length || 0}</span>{' '}
 						volunteers
 					</div>
 					<Button asChild variant="outline">
