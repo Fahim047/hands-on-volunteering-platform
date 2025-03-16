@@ -1,9 +1,8 @@
 import { format } from 'date-fns';
 import { CalendarIcon, Clock, MapPin } from 'lucide-react';
-import { Link } from 'react-router';
 import { Button } from '../ui/button';
 
-const EventCard = ({ event }) => {
+const EventCard = ({ event, onJoin, isJoining }) => {
 	return (
 		<div className="bg-white rounded-lg shadow-md overflow-hidden">
 			<div className="relative">
@@ -59,8 +58,12 @@ const EventCard = ({ event }) => {
 						<span className="font-medium">{event?.attendees?.length || 0}</span>{' '}
 						volunteers
 					</div>
-					<Button asChild variant="outline">
-						<Link to={`/events/${event.id}`}>Join Event</Link>
+					<Button
+						variant="outline"
+						onClick={() => onJoin(event.id)}
+						disabled={isJoining}
+					>
+						{isJoining ? 'Joining...' : 'Join'}
 					</Button>
 				</div>
 			</div>

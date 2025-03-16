@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config/env.js';
 import User from '../models/user.model.js';
+import { removeMongoDBIdFromObject } from '../utils/mongo-utils.js';
 
 export const authorize = async (req, res, next) => {
 	try {
@@ -15,10 +16,10 @@ export const authorize = async (req, res, next) => {
 		if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
 		const decoded = jwt.verify(token, JWT_SECRET);
-		const user = await User.findById(decoded.id).select('-password').lean();
+		const user = await User.findById(decoded.userId).select('-password').lean();
 		if (!user) return res.status(401).json({ message: 'Unauthorized' });
 
-		req.user = user;
+		req.user = removeMongoDBIdFromObject(user);
 		next();
 	} catch (error) {
 		res.status(401).json({ message: 'Unauthorized', error: error.message });

@@ -10,7 +10,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { useQuery } from '@tanstack/react-query';
+import { joinEvent } from '@/lib/queries';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { FilterX } from 'lucide-react';
@@ -26,6 +27,7 @@ const categories = [
 ];
 
 export default function EventListingPage() {
+	const queryClient = useQueryClient();
 	const {
 		data: events,
 		isPending,
@@ -37,6 +39,24 @@ export default function EventListingPage() {
 				`${import.meta.env.VITE_API_BASE_URL}/events`
 			);
 			return response.data.data;
+		},
+	});
+	const { mutate: handleJoin, isPending: isJoining } = useMutation({
+		mutationFn: joinEvent,
+		onSuccess: (data, eventId) => {
+			alert('Successfully joined the event!');
+
+			// ✅ Instead of invalidating all events, update only the joined event
+			queryClient.setQueryData(['events'], (oldData) =>
+				oldData.map((event) =>
+					event.id === eventId
+						? { ...event, attendees: [...event.attendees, {}] }
+						: event
+				)
+			);
+		},
+		onError: (error) => {
+			alert(error.response?.data?.message || 'Something went wrong.');
 		},
 	});
 
@@ -133,7 +153,12 @@ export default function EventListingPage() {
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 				{filteredEvents.map((event) => (
-					<EventCard key={event.id} event={event} />
+					<EventCard
+						key={event.id}
+						event={event}
+						isJoining={isJoining}
+						onJoin={handleJoin}
+					/>
 				))}
 			</div>
 		</div>
