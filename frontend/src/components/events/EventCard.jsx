@@ -2,7 +2,12 @@ import { format } from 'date-fns';
 import { CalendarIcon, Clock, MapPin } from 'lucide-react';
 import { Button } from '../ui/button';
 
-const EventCard = ({ event, onJoin, isJoining }) => {
+const EventCard = ({
+	event,
+	onJoin = () => {},
+	isJoining = false,
+	alreadyJoined = false,
+}) => {
 	return (
 		<div className="bg-white rounded-lg shadow-md overflow-hidden">
 			<div className="relative">
@@ -53,18 +58,20 @@ const EventCard = ({ event, onJoin, isJoining }) => {
 				<p className="text-sm text-gray-600 mb-4 line-clamp-2">
 					{event.description}
 				</p>
-				<div className="flex justify-between items-center">
+				<div className="flex flex-col gap-2">
 					<div className="text-sm text-gray-500">
 						<span className="font-medium">{event?.attendees?.length || 0}</span>{' '}
 						volunteers
 					</div>
-					<Button
-						variant="outline"
-						onClick={() => onJoin(event.id)}
-						disabled={isJoining}
-					>
-						{isJoining ? 'Joining...' : 'Join'}
-					</Button>
+					{alreadyJoined ? (
+						<Button variant="outline" disabled>
+							✅ Already Joined
+						</Button>
+					) : (
+						<Button onClick={() => onJoin(event.id)} disabled={isJoining}>
+							{isJoining ? 'Joining...' : 'Join Event'}
+						</Button>
+					)}
 				</div>
 			</div>
 		</div>

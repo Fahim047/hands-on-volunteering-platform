@@ -10,6 +10,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { useAuth } from '@/hooks';
 import { joinEvent } from '@/lib/queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -17,6 +18,7 @@ import { format } from 'date-fns';
 import { FilterX } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 const categories = [
 	{ value: 'Environment', label: '🌱 Environment' },
@@ -27,6 +29,7 @@ const categories = [
 ];
 
 export default function EventListingPage() {
+	const { user } = useAuth();
 	const queryClient = useQueryClient();
 	const {
 		data: events,
@@ -44,9 +47,7 @@ export default function EventListingPage() {
 	const { mutate: handleJoin, isPending: isJoining } = useMutation({
 		mutationFn: joinEvent,
 		onSuccess: (data, eventId) => {
-			alert('Successfully joined the event!');
-
-			// ✅ Instead of invalidating all events, update only the joined event
+			toast.success(data.message);
 			queryClient.setQueryData(['events'], (oldData) =>
 				oldData.map((event) =>
 					event.id === eventId
@@ -56,7 +57,7 @@ export default function EventListingPage() {
 			);
 		},
 		onError: (error) => {
-			alert(error.response?.data?.message || 'Something went wrong.');
+			toast.error(error.response?.data?.error || 'Error while joining event');
 		},
 	});
 
@@ -158,6 +159,7 @@ export default function EventListingPage() {
 						event={event}
 						isJoining={isJoining}
 						onJoin={handleJoin}
+						alreadyJoined={event?.attendees?.includes(user?._id)}
 					/>
 				))}
 			</div>
