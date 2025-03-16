@@ -58,3 +58,26 @@ export const getEvents = asyncHandler(async (req, res, next) => {
 		data: processedEvents,
 	});
 });
+
+export const joinEvent = asyncHandler(async (req, res, next) => {
+	const id = req.params?.id;
+	const userId = req.user?.id;
+	const event = await Event.findById(id);
+	if (!event) {
+		const error = new Error('Event not found');
+		error.statusCode = 404;
+		throw error;
+	}
+	if (event.attendees.includes(userId)) {
+		const error = new Error('You have already joined this event');
+		error.statusCode = 400;
+		throw error;
+	}
+	event.attendees.push(userId);
+	await event.save();
+	return res.status(200).json({
+		status: true,
+		message: 'Successfully joined the event',
+		data: event,
+	});
+});

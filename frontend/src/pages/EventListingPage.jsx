@@ -10,12 +10,15 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/hooks';
+import { joinEvent } from '@/lib/queries';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { FilterX } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 const categories = [
 	{ value: 'Environment', label: '🌱 Environment' },
@@ -26,6 +29,8 @@ const categories = [
 ];
 
 export default function EventListingPage() {
+	const { user } = useAuth();
+	const queryClient = useQueryClient();
 	const {
 		data: events,
 		isPending,
@@ -37,6 +42,22 @@ export default function EventListingPage() {
 				`${import.meta.env.VITE_API_BASE_URL}/events`
 			);
 			return response.data.data;
+		},
+	});
+	const { mutate: handleJoin, isPending: isJoining } = useMutation({
+		mutationFn: joinEvent,
+		onSuccess: (data, eventId) => {
+			toast.success(data.message);
+			queryClient.setQueryData(['events'], (oldData) =>
+				oldData.map((event) =>
+					event.id === eventId
+						? { ...event, attendees: [...event.attendees, {}] }
+						: event
+				)
+			);
+		},
+		onError: (error) => {
+			toast.error(error.response?.data?.error || 'Error while joining event');
 		},
 	});
 
@@ -133,7 +154,13 @@ export default function EventListingPage() {
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 				{filteredEvents.map((event) => (
-					<EventCard key={event.id} event={event} />
+					<EventCard
+						key={event.id}
+						event={event}
+						isJoining={isJoining}
+						onJoin={handleJoin}
+						alreadyJoined={event?.attendees?.includes(user?._id)}
+					/>
 				))}
 			</div>
 		</div>

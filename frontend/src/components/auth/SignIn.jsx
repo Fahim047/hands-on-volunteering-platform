@@ -45,9 +45,14 @@ const SignIn = () => {
 				`${import.meta.env.VITE_API_BASE_URL}/auth/sign-in`,
 				data
 			);
-			setUser(response.data?.data?.user);
-			toast.success(response.data?.message || 'Sign in successful!');
-			navigate('/');
+			if (response.data?.data) {
+				const { token, user } = response.data.data;
+				setUser({ ...user, token });
+				toast.success(response.data.message || 'Sign in successful!');
+				navigate('/');
+			} else {
+				toast.error('Invalid response data');
+			}
 		} catch (error) {
 			console.error('Sign in error:', error.response?.data || error.message);
 
