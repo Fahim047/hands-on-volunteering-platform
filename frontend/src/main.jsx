@@ -1,6 +1,7 @@
 import EventCreationPage from '@/pages/EventCreationPage';
 import EventListingPage from '@/pages/EventListingPage';
 import HomePage from '@/pages/HomePage.jsx';
+import ProfileManagement from '@/pages/ProfileManagementPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')).render(
 							<Route index element={<HomePage />} />
 							<Route path="sign-in" element={<SignIn />} />
 							<Route path="sign-up" element={<SignUp />} />
+							<Route path="profile" element={<ProfileManagement />} />
 							<Route path="/events" element={<EventListingPage />} />
 							<Route path="/events/create" element={<EventCreationPage />} />
 							<Route path="*" element={<h1>404</h1>} />
