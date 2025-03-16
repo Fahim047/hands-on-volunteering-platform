@@ -34,6 +34,20 @@ const userSchema = new mongoose.Schema(
 				trim: true,
 			},
 		],
+		avatar: {
+			type: String,
+			default: null,
+		},
+		points: {
+			type: Number,
+			default: 0,
+		},
+		volunteerHistory: [
+			{
+				event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
+				hoursLogged: Number,
+			},
+		],
 	},
 	{ timestamps: true }
 );
