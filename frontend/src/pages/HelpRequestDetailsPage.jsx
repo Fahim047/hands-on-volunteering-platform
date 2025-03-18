@@ -4,8 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { getHelpRequestById } from '@/lib/queries';
+import { useQuery } from '@tanstack/react-query';
 import { Reply, UserRound } from 'lucide-react';
 import { useState } from 'react';
+import { useParams } from 'react-router';
 
 const urgencyVariants = {
 	low: 'bg-blue-100 text-blue-800',
@@ -13,40 +16,21 @@ const urgencyVariants = {
 	urgent: 'bg-red-100 text-red-800',
 };
 
-// Sample data with replies
-const request = {
-	id: 1,
-	title: 'Help with React Query',
-	description: 'I need help understanding how React Query works.',
-	urgency: 'medium',
-	author: { name: 'Anonymous' },
-	comments: [
-		{
-			id: 1,
-			author: { name: 'User1', avatar: '' },
-			text: 'Have you tried the documentation?',
-			replies: [],
-		},
-		{
-			id: 2,
-			author: { name: 'User2', avatar: '' },
-			text: 'React Query is great for data fetching.',
-			replies: [
-				{
-					id: 3,
-					author: { name: 'User3', avatar: '' },
-					text: 'I agree, especially for managing server state.',
-				},
-			],
-		},
-	],
-};
-
 const HelpRequestDetailsPage = () => {
 	const [commentText, setCommentText] = useState('');
 	const [replyTexts, setReplyTexts] = useState({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [replyingTo, setReplyingTo] = useState(null);
+	const { id } = useParams();
+
+	const {
+		data: request,
+		isPending,
+		isError,
+	} = useQuery({
+		queryKey: ['help-request', id],
+		queryFn: () => getHelpRequestById(id),
+	});
 
 	const handleSubmitComment = async () => {
 		if (commentText.trim() === '') return;
@@ -85,6 +69,14 @@ const HelpRequestDetailsPage = () => {
 		setReplyTexts((prev) => ({ ...prev, [commentId]: text }));
 	};
 
+	if (isPending) {
+		return <div>Loading...</div>;
+	}
+	if (isError) {
+		return <div>Something went wrong</div>;
+	}
+	console.log(request);
+
 	return (
 		<div className="max-w-3xl mx-auto p-4">
 			{/* Request Details */}
@@ -92,7 +84,7 @@ const HelpRequestDetailsPage = () => {
 				<CardHeader className="pb-4">
 					<div className="flex justify-between items-center">
 						<CardTitle>{request.title}</CardTitle>
-						<Badge className={`${urgencyVariants[request.urgency]}`}>
+						<Badge className={`${urgencyVariants[request.urgency]} capitalize`}>
 							{request.urgency}
 						</Badge>
 					</div>

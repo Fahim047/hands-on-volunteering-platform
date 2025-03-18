@@ -15,8 +15,12 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/hooks';
+import { getHelpRequests, postHelpRequest } from '@/lib/queries';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 const urgencyLevels = [
 	{ value: 'low', label: '🟢 Low' },
@@ -24,33 +28,8 @@ const urgencyLevels = [
 	{ value: 'urgent', label: '🔴 Urgent' },
 ];
 
-// Mock API data
-const mockRequests = [
-	{
-		id: 1,
-		title: 'Help with React Query',
-		description: 'I need help understanding how React Query works.',
-		urgency: 'medium',
-		responses: 15,
-	},
-	{
-		id: 2,
-		title: 'Fix CSS layout issue',
-		description: 'The footer is overlapping with the main content.',
-		urgency: 'low',
-		responses: 25,
-	},
-	{
-		id: 3,
-		title: 'Urgent: Database connection error',
-		description: 'Our app cannot connect to the database.',
-		urgency: 'urgent',
-		responses: 5,
-	},
-];
-
 export default function HelpRequestPage() {
-	const [requests, setRequests] = useState(mockRequests);
+	const { user } = useAuth();
 	const [isLoading, setIsLoading] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -69,22 +48,43 @@ export default function HelpRequestPage() {
 		},
 	});
 
+	const {
+		data: requests,
+		isPending,
+		isError,
+	} = useQuery({
+		queryKey: ['help-requests'],
+		queryFn: getHelpRequests,
+	});
+
 	// Simulate posting a new help request
 	const postRequest = async (data) => {
 		setIsLoading(true);
-		return new Promise((resolve) => {
-			setTimeout(() => {
-				setRequests((prevRequests) => [
-					...prevRequests,
-					{ id: Date.now(), ...data },
-				]);
-				resolve();
-				setIsLoading(false);
-				setIsModalOpen(false); // Close modal after submission
-				reset(); // Reset the form
-			}, 500); // Simulate network delay
-		});
+		try {
+			const newRequest = {
+				...data,
+				author: user._id,
+			};
+			const response = await postHelpRequest(newRequest);
+			if (response.status) {
+				toast.success(response.message || 'Request posted successfully!');
+				reset();
+				setIsModalOpen(false);
+			}
+		} catch (error) {
+			console.error('Error posting request:', error);
+			toast.error('Something went wrong!');
+		} finally {
+			setIsLoading(false);
+		}
 	};
+
+	if (isPending) {
+		return <div>Loading...</div>;
+	}
+	if (isError) {
+		return <div>Error</div>;
+	}
 
 	return (
 		<div className="max-w-4xl mx-auto p-6">

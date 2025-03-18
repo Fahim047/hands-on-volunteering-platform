@@ -42,7 +42,8 @@ const HelpRequestCard = ({ request }) => {
 
 			<CardFooter className="flex justify-between items-center">
 				<div className="text-sm text-gray-500">
-					<span className="font-medium">{request.responses}</span> responses
+					<span className="font-medium">{request.comments.length}</span>{' '}
+					comments
 				</div>
 				<Button asChild variant="outline" size="sm">
 					<Link to={`/help-requests/${request.id}`}>Offer Help</Link>
