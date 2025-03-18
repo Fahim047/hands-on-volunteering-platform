@@ -1,5 +1,11 @@
+import mongoose from 'mongoose';
+
 const CommentSchema = new mongoose.Schema(
 	{
+		helpRequest: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'HelpRequest',
+		},
 		author: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',

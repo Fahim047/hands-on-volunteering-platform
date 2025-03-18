@@ -7,7 +7,6 @@ import {
 
 export const getHelpRequests = asyncHandler(async (req, res, next) => {
 	const helpRequests = await HelpRequest.find().lean();
-	console.log(helpRequests);
 	return res.status(200).json({
 		status: true,
 		message: 'Successfully fetched the help requests',

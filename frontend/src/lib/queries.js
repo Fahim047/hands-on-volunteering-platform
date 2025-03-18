@@ -34,3 +34,20 @@ export const getHelpRequestById = async (id) => {
 	const response = await axios.get(`${API_BASE_URL}/help-requests/${id}`);
 	return response.data.data;
 };
+
+// export const postComment = async(data) => {
+// 	const response = await axios.post(`${API_BASE_URL}/comments`, data)
+// }
+export const getCommentsByHelpRequestId = async (id) => {
+	const response = await axios.get(
+		`${API_BASE_URL}/help-requests/${id}/comments`
+	);
+	return response.data.data;
+};
+export const postComment = async (postId, data) => {
+	const response = await axios.post(
+		`${API_BASE_URL}/help-requests/${postId}/comments`,
+		data
+	);
+	return response.data;
+};
