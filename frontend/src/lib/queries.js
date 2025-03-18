@@ -51,3 +51,10 @@ export const postComment = async (postId, data) => {
 	);
 	return response.data;
 };
+export const postReply = async (commentId, data) => {
+	const response = await axios.post(
+		`${API_BASE_URL}/comments/${commentId}/reply`,
+		data
+	);
+	return response.data;
+};
