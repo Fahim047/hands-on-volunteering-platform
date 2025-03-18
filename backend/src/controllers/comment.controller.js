@@ -1,7 +1,6 @@
 import { Comment } from '../models/comment.model.js';
 import { HelpRequest } from '../models/helpRequest.model.js';
 import asyncHandler from '../utils/asyncHandler.js';
-import { removeMongoDBIdFromArray } from '../utils/mongo-utils.js';
 
 export const getCommentsByHelpRequestId = asyncHandler(
 	async (req, res, next) => {
@@ -12,26 +11,44 @@ export const getCommentsByHelpRequestId = asyncHandler(
 			error.statusCode = 404;
 			throw error;
 		}
+
+		// Fetch all comments for the help request
 		const comments = await Comment.find({ helpRequest: id })
 			.populate({
 				path: 'author',
-				select: 'name',
+				select: 'name avatar',
 			})
-			.populate({
-				path: 'replies',
-				populate: {
-					path: 'author',
-					select: 'name avatar', // Populate replies' author too
-				},
-			})
-			.lean();
+			.lean(); // Convert to plain JavaScript objects
+
+		// Convert flat comments into a nested structure
+		const commentMap = {};
+		const topLevelComments = [];
+
+		comments.forEach((comment) => {
+			comment.replies = []; // Initialize replies array
+			commentMap[comment._id] = comment; // Store in a map
+		});
+
+		comments.forEach((comment) => {
+			if (comment.parentComment) {
+				// If it's a reply, push it into its parent's replies array
+				if (commentMap[comment.parentComment]) {
+					commentMap[comment.parentComment].replies.push(comment);
+				}
+			} else {
+				// If it's a top-level comment, push it to the main array
+				topLevelComments.push(comment);
+			}
+		});
+
 		return res.status(200).json({
 			status: true,
 			message: 'Successfully fetched the comments',
-			data: removeMongoDBIdFromArray(comments),
+			data: topLevelComments, // Return only top-level comments (nested structure)
 		});
 	}
 );
+
 export const createComment = asyncHandler(async (req, res, next) => {
 	const { text, author, parentCommentId } = req.body;
 	const helpRequestId = req.params.id;
@@ -106,6 +123,7 @@ export const createReply = asyncHandler(async (req, res, next) => {
 		text,
 		author,
 		helpRequest: parentComment.helpRequest,
+		parentComment: parentCommentId,
 	});
 
 	parentComment.replies.push(newReply._id);

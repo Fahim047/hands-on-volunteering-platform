@@ -16,7 +16,6 @@ const CommentItem = ({
 	parentId = null,
 	maxLevel = 3, // Limit nesting levels for better UI
 }) => {
-	console.log(comment);
 	const [showReplyForm, setShowReplyForm] = useState(false);
 	const [showReplies, setShowReplies] = useState(level < 2);
 	const [replyText, setReplyText] = useState('');
@@ -26,10 +25,10 @@ const CommentItem = ({
 	// Mutation for submitting a reply
 	const { mutate: submitReply, isPending: isSubmitting } = useMutation({
 		mutationFn: () =>
-			postReply(comment.id, {
+			postReply(comment.id || comment._id, {
 				text: replyText,
 				author: user._id,
-				parentComment: parentId || comment.id,
+				parentComment: parentId || comment.id || comment._id,
 			}),
 		onSuccess: () => {
 			toast.success('Reply submitted successfully!');
@@ -48,7 +47,7 @@ const CommentItem = ({
 
 	const handleReplyClick = () => {
 		setShowReplyForm((prev) => !prev);
-		if (onReply) onReply(comment.id);
+		if (onReply) onReply(comment.id || comment._id);
 	};
 
 	return (
@@ -61,16 +60,16 @@ const CommentItem = ({
 			<div className="rounded-lg p-3">
 				<div className="flex items-start gap-3">
 					<Avatar className="size-8">
-						<AvatarImage src={comment.author.avatar} alt="" />
-						<AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
+						<AvatarImage src={comment.author?.avatar} alt="" />
+						<AvatarFallback>{comment.author?.name.charAt(0)}</AvatarFallback>
 					</Avatar>
 
 					<div className="flex-1">
 						<div className="bg-gray-50 p-2 rounded-md">
 							<div className="flex justify-between items-center mb-1">
-								<p className="font-medium">{comment.author.name}</p>
+								<p className="font-medium">{comment.author?.name}</p>
 								<span className="text-xs text-gray-500">
-									{formatTimestamp(comment.createdAt)}
+									{formatTimestamp(comment?.createdAt || new Date())}
 								</span>
 							</div>
 							<p className="text-gray-700 mb-2">{comment.text}</p>
@@ -144,7 +143,7 @@ const CommentItem = ({
 									comment={reply}
 									level={level + 1}
 									onReply={onReply}
-									parentId={comment.id}
+									parentId={comment.id || comment._id}
 									maxLevel={maxLevel}
 								/>
 							))}

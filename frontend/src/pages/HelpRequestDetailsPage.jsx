@@ -31,7 +31,6 @@ const HelpRequestDetailsPage = () => {
 	if (isError) {
 		return <div>Something went wrong</div>;
 	}
-
 	return (
 		<div className="max-w-3xl mx-auto p-4">
 			{/* Request Details */}

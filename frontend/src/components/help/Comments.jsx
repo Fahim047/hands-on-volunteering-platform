@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -9,11 +9,10 @@ import { useAuth } from '@/hooks';
 import { getCommentsByHelpRequestId, postComment } from '@/lib/queries';
 import CommentItem from './CommentItem';
 
-// Main Comments Component
 const Comments = ({ helpRequestId }) => {
 	const { user } = useAuth();
-	const [commentText, setCommentText] = useState('');
 	const queryClient = useQueryClient();
+	const [commentText, setCommentText] = useState(''); // ✅ Use state for reactivity
 
 	// Fetch comments
 	const {
@@ -22,7 +21,7 @@ const Comments = ({ helpRequestId }) => {
 		isError,
 		refetch,
 	} = useQuery({
-		queryKey: ['help-request', helpRequestId, 'comments'],
+		queryKey: ['comments', helpRequestId],
 		queryFn: () => getCommentsByHelpRequestId(helpRequestId),
 	});
 
@@ -32,25 +31,21 @@ const Comments = ({ helpRequestId }) => {
 			postComment(helpRequestId, { text: commentText, author: user._id }),
 		onSuccess: () => {
 			toast.success('Comment submitted successfully!');
-			setCommentText('');
-			queryClient.invalidateQueries([
-				'help-request',
-				helpRequestId,
-				'comments',
-			]); // Refresh comments
+			setCommentText(''); // ✅ Clear the input after submission
+			queryClient.invalidateQueries(['comments', helpRequestId]);
 		},
 		onError: () => {
 			toast.error('Could not submit comment. Please try again!');
 		},
 	});
 
-	// Handle form submission
-	const handleSubmitComment = () => {
+	// Handle form submission (Memoized)
+	const handleSubmitComment = useCallback(() => {
 		if (commentText.trim() === '') return;
 		submitComment();
-	};
+	}, [submitComment, commentText]);
 
-	// Handle loading & error states
+	console.log(comments);
 	if (isPending)
 		return <div className="py-4 text-center">Loading comments...</div>;
 	if (isError)
@@ -84,8 +79,8 @@ const Comments = ({ helpRequestId }) => {
 					<div className="flex-1">
 						<Textarea
 							placeholder="Write a comment..."
-							value={commentText}
-							onChange={(e) => setCommentText(e.target.value)}
+							value={commentText} // ✅ Controlled input
+							onChange={(e) => setCommentText(e.target.value)} // ✅ Updates state
 							className="min-h-[100px] mb-3 resize-none"
 						/>
 						<div className="flex justify-end">
@@ -104,7 +99,11 @@ const Comments = ({ helpRequestId }) => {
 			{comments.length > 0 ? (
 				<div className="comments-list space-y-1">
 					{comments.map((comment) => (
-						<CommentItem key={comment.id} comment={comment} level={0} />
+						<CommentItem
+							key={comment._id || comment.id}
+							comment={comment}
+							level={0}
+						/>
 					))}
 				</div>
 			) : (

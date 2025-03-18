@@ -6,7 +6,9 @@ import {
 } from '../utils/mongo-utils.js';
 
 export const getHelpRequests = asyncHandler(async (req, res, next) => {
-	const helpRequests = await HelpRequest.find().lean();
+	const helpRequests = await HelpRequest.find()
+		.populate('author', 'name')
+		.lean();
 	return res.status(200).json({
 		status: true,
 		message: 'Successfully fetched the help requests',
