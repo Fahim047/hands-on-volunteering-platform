@@ -14,10 +14,14 @@ app.use(express.urlencoded({ extended: false }));
 // Routes
 import { PORT } from './src/config/env.js';
 import authRouter from './src/routes/auth.routes.js';
+import commentRouter from './src/routes/comment.routes.js';
 import eventRouter from './src/routes/event.routes.js';
+import helpRequestRouter from './src/routes/helpRequest.routes.js';
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/events', eventRouter);
+app.use('/api/v1/help-requests', helpRequestRouter);
+app.use('/api/v1/comments', commentRouter);
 
 app.use(errorMiddleware);
 
