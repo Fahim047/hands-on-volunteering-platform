@@ -12,6 +12,7 @@ import SignUp from './components/auth/SignUp';
 import './index.css';
 import MainLayout from './layouts/MainLayout';
 import HelpRequestDetailsPage from './pages/HelpRequestDetailsPage';
+import MyEventsPage from './pages/MyEventsPage';
 import AuthProvider from './providers/AuthProvider';
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')).render(
 							<Route path="sign-in" element={<SignIn />} />
 							<Route path="sign-up" element={<SignUp />} />
 							<Route path="profile" element={<ProfileManagement />} />
+							<Route path="my-events" element={<MyEventsPage />} />
 							<Route path="/events" element={<EventListingPage />} />
 							<Route path="/events/create" element={<EventCreationPage />} />
 							<Route path="/help-requests" element={<HelpRequestPage />} />

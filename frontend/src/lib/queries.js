@@ -4,6 +4,26 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const user = localStorage.getItem('user');
 const token = JSON.parse(user).token;
 
+export const createEvent = async (data) => {
+	const response = await axios.post(`${API_BASE_URL}/events`, data, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.data;
+};
+export const updateEvent = async (eventId, data) => {
+	const response = await axios.patch(
+		`${API_BASE_URL}/events/${eventId}`,
+		data,
+		{
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}
+	);
+	return response.data;
+};
 export const joinEvent = async (eventId) => {
 	const response = await axios.patch(
 		`${API_BASE_URL}/events/${eventId}/join`,
@@ -16,7 +36,22 @@ export const joinEvent = async (eventId) => {
 	);
 	return response.data;
 };
-
+export const getMyEvents = async () => {
+	const response = await axios.get(`${API_BASE_URL}/events/my-events`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.data.data;
+};
+export const deleteEvent = async (eventId) => {
+	const response = await axios.delete(`${API_BASE_URL}/events/${eventId}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.data;
+};
 export const postHelpRequest = async (data) => {
 	const response = await axios.post(`${API_BASE_URL}/help-requests`, data, {
 		headers: {
