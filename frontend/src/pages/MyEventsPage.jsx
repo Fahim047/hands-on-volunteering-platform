@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { deleteEvent, getMyEvents } from '@/lib/queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 const MyEventsPage = () => {
 	const queryClient = useQueryClient();
@@ -21,6 +22,10 @@ const MyEventsPage = () => {
 		mutationFn: deleteEvent,
 		onSuccess: () => {
 			queryClient.invalidateQueries(['my-events']);
+			toast.success('Event deleted successfully!');
+		},
+		onError: () => {
+			toast.error('Could not delete event!');
 		},
 	});
 
@@ -28,9 +33,34 @@ const MyEventsPage = () => {
 	const [selectedEvent, setSelectedEvent] = useState(null);
 
 	const handleDelete = (eventId) => {
-		if (confirm('Are you sure you want to delete this event?')) {
-			deleteMutation.mutate(eventId);
-		}
+		toast.custom(
+			(t) => (
+				<div className="w-96 p-4 bg-gray-100 rounded-lg">
+					<h4 className="text-xl font-bold mb-4">Are you sure?</h4>
+					<div className="flex items-center gap-2 justify-center">
+						<Button
+							variant="outline"
+							size="lg"
+							onClick={() => toast.dismiss(t)}
+						>
+							No
+						</Button>
+						<Button
+							variant="destructive"
+							className="hover:bg-red-500"
+							size="lg"
+							onClick={() => {
+								deleteMutation.mutate(eventId);
+								toast.dismiss(t);
+							}}
+						>
+							Yes
+						</Button>
+					</div>
+				</div>
+			),
+			{ position: 'top-center', duration: Infinity }
+		);
 	};
 
 	const handleEdit = (event) => {
@@ -45,10 +75,9 @@ const MyEventsPage = () => {
 
 	if (isPending) return <div>Loading...</div>;
 	if (isError) return <div>Error fetching events</div>;
-
 	return (
 		<div className="max-w-7xl mx-auto px-4 py-12">
-			<div className="flex items-center justify-between">
+			<div className="flex items-center justify-between mb-8">
 				<h1 className="text-3xl font-bold mb-4">My Events</h1>
 				{/* Create Event Button */}
 				<Button onClick={handleCreate}>Create Event</Button>

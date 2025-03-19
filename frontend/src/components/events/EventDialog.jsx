@@ -29,8 +29,8 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks';
+import { createEvent, updateEvent } from '@/lib/queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { format } from 'date-fns';
 import { CalendarIcon, Clock, MapPin } from 'lucide-react';
 import { useEffect } from 'react';
@@ -69,25 +69,19 @@ export default function EventDialog({ open, onClose, eventData }) {
 			const eventPayload = { ...data, author: user._id };
 
 			if (eventData) {
-				return axios.put(
-					`${import.meta.env.VITE_API_BASE_URL}/events/${eventData._id}`,
-					eventPayload
-				);
+				return updateEvent(eventData.id, eventPayload);
 			} else {
-				return axios.post(
-					`${import.meta.env.VITE_API_BASE_URL}/events`,
-					eventPayload
-				);
+				return createEvent(eventPayload);
 			}
 		},
 		onSuccess: () => {
+			queryClient.invalidateQueries(['my-events']);
+			onClose();
 			toast.success(
 				eventData
 					? 'Event Updated Successfully!'
 					: 'Event Created Successfully!'
 			);
-			queryClient.invalidateQueries(['my-events']);
-			onClose();
 		},
 		onError: () => {
 			toast.error('Something went wrong!');

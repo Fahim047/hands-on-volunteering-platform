@@ -1,12 +1,13 @@
 import { format } from 'date-fns';
 import { CalendarIcon, Clock, Edit, MapPin, Trash2 } from 'lucide-react';
+import { Link } from 'react-router';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 
 const EventManageCard = ({ event, onEdit, onDelete }) => {
 	return (
-		<Card className="p-0 bg-white shadow-md rounded-lg overflow-hidden">
+		<Card className="p-0 gap-3 bg-white shadow-md rounded-lg overflow-hidden">
 			{/* Event Image */}
 			<div className="relative">
 				<img
@@ -18,12 +19,13 @@ const EventManageCard = ({ event, onEdit, onDelete }) => {
 					<Badge>{event.category}</Badge>
 				</div>
 			</div>
-
-			{/* Event Details */}
-			<CardContent className="p-4">
-				<h3 className="text-lg font-semibold text-gray-900 mb-1">
+			<CardContent className="px-3">
+				<Link
+					to={`/events/${event.id}`}
+					className="text-lg font-semibold text-gray-900 hover:text-primary inline-block mb-2"
+				>
 					{event.title}
-				</h3>
+				</Link>
 				<p className="text-sm text-gray-500 mb-2 flex items-center">
 					<CalendarIcon className="size-5 mr-1" />
 					<span>{format(new Date(event.date), 'PPP')}</span>
@@ -41,7 +43,7 @@ const EventManageCard = ({ event, onEdit, onDelete }) => {
 				</p>
 
 				{/* Action Buttons */}
-				<div className="flex justify-between">
+				<div className="flex justify-between mb-4">
 					<Button
 						variant="outline"
 						className="flex items-center"

@@ -1,6 +1,9 @@
 import Event from '../models/event.model.js';
 import asyncHandler from '../utils/asyncHandler.js';
-import { removeMongoDBIdFromArray } from '../utils/mongo-utils.js';
+import {
+	removeMongoDBIdFromArray,
+	removeMongoDBIdFromObject,
+} from '../utils/mongo-utils.js';
 
 export const createEvent = asyncHandler(async (req, res, next) => {
 	// const session = await mongoose.startSession();
@@ -45,6 +48,50 @@ export const createEvent = asyncHandler(async (req, res, next) => {
 		success: true,
 		message: 'Event created successfully',
 		data: newEvent,
+	});
+});
+export const updateEvent = asyncHandler(async (req, res, next) => {
+	const id = req.params?.id;
+	const { title, description, date, startTime, endTime, category, location } =
+		req.body;
+
+	// Check if event exists
+	const event = await Event.findById(id);
+	if (!event) {
+		const error = new Error('Event not found');
+		error.statusCode = 404;
+		throw error;
+	}
+
+	// Update fields only if they are provided in request
+	if (title) event.title = title;
+	if (description) event.description = description;
+	if (date) event.date = date;
+	if (startTime) event.startTime = startTime;
+	if (endTime) event.endTime = endTime;
+	if (category) event.category = category;
+	if (location) event.location = location;
+
+	// Save updated event
+	await event.save();
+
+	return res.status(200).json({
+		status: true,
+		message: 'Successfully updated the event',
+		data: removeMongoDBIdFromObject(event),
+	});
+});
+export const deleteEvent = asyncHandler(async (req, res, next) => {
+	const id = req.params?.id;
+	const event = await Event.findByIdAndDelete(id);
+	if (!event) {
+		const error = new Error('Event not found');
+		error.statusCode = 404;
+		throw error;
+	}
+	return res.status(200).json({
+		status: true,
+		message: 'Successfully deleted the event',
 	});
 });
 
