@@ -81,3 +81,13 @@ export const joinEvent = asyncHandler(async (req, res, next) => {
 		data: event,
 	});
 });
+
+export const getMyEvents = asyncHandler(async (req, res, next) => {
+	const userId = req.user?.id;
+	const events = await Event.find({ author: userId }).select('-__v').lean();
+	const processedEvents = removeMongoDBIdFromArray(events);
+	res.status(200).json({
+		status: true,
+		data: processedEvents,
+	});
+});

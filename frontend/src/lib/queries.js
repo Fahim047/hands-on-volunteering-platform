@@ -16,7 +16,15 @@ export const joinEvent = async (eventId) => {
 	);
 	return response.data;
 };
-
+export const getMyEvents = async () => {
+	const response = await axios.get(`${API_BASE_URL}/events/my-events`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.data.data;
+};
+export const deleteEvent = async (eventId) => {};
 export const postHelpRequest = async (data) => {
 	const response = await axios.post(`${API_BASE_URL}/help-requests`, data, {
 		headers: {

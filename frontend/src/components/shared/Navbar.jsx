@@ -1,5 +1,5 @@
 import { useAuth } from '@/hooks';
-import { ChevronDown, LogOut, Menu, User } from 'lucide-react';
+import { Calendar, ChevronDown, LogOut, Menu, User } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
@@ -189,6 +189,12 @@ const UserMenu = ({ user, onLogout }) => {
 						<Link to="/profile">
 							<User className="mr-2 h-4 w-4" />
 							Your Profile
+						</Link>
+					</DropdownMenuItem>
+					<DropdownMenuItem asChild>
+						<Link to="/my-events">
+							<Calendar className="mr-2 h-4 w-4" />
+							My Events
 						</Link>
 					</DropdownMenuItem>
 				</DropdownMenuGroup>
