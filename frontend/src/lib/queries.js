@@ -44,6 +44,10 @@ export const getMyEvents = async () => {
 	});
 	return response.data.data;
 };
+export const getUpcomingEvents = async () => {
+	const response = await axios.get(`${API_BASE_URL}/events/upcoming`);
+	return response.data?.data;
+};
 export const getParticipationEvents = async (userId) => {
 	const response = await axios.get(
 		`${API_BASE_URL}/events?attendee=${userId}`,
