@@ -44,6 +44,17 @@ export const getMyEvents = async () => {
 	});
 	return response.data.data;
 };
+export const getParticipationEvents = async (userId) => {
+	const response = await axios.get(
+		`${API_BASE_URL}/events?attendee=${userId}`,
+		{
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}
+	);
+	return response.data.data;
+};
 export const deleteEvent = async (eventId) => {
 	const response = await axios.delete(`${API_BASE_URL}/events/${eventId}`, {
 		headers: {

@@ -113,6 +113,25 @@ const Navbar = () => {
 								<Separator />
 								{user ? (
 									<div className="space-y-4">
+										<SheetClose asChild>
+											<Link
+												to="/my-events"
+												onClick={() => setIsOpen(false)}
+												className="ml-2 font-medium"
+											>
+												My Events
+											</Link>
+										</SheetClose>
+										<SheetClose asChild>
+											<Link
+												to="/my-participation-events"
+												onClick={() => setIsOpen(false)}
+												className="ml-2 font-medium"
+											>
+												My Participation Events
+											</Link>
+										</SheetClose>
+										<Separator className="mt-3" />
 										<div className="p-2 flex items-center">
 											<Avatar className="h-10 w-10 mr-3">
 												<AvatarImage
@@ -195,6 +214,12 @@ const UserMenu = ({ user, onLogout }) => {
 						<Link to="/my-events">
 							<Calendar className="mr-2 h-4 w-4" />
 							My Events
+						</Link>
+					</DropdownMenuItem>
+					<DropdownMenuItem asChild>
+						<Link to="/my-participation-events">
+							<Calendar className="mr-2 h-4 w-4" />
+							My Participation Events
 						</Link>
 					</DropdownMenuItem>
 				</DropdownMenuGroup>
