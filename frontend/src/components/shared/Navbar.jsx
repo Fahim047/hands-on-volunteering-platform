@@ -113,24 +113,26 @@ const Navbar = () => {
 								<Separator />
 								{user ? (
 									<div className="space-y-4">
-										<SheetClose asChild>
-											<Link
-												to="/my-events"
-												onClick={() => setIsOpen(false)}
-												className="ml-2 font-medium"
-											>
-												My Events
-											</Link>
-										</SheetClose>
-										<SheetClose asChild>
-											<Link
-												to="/my-participation-events"
-												onClick={() => setIsOpen(false)}
-												className="ml-2 font-medium"
-											>
-												My Participation Events
-											</Link>
-										</SheetClose>
+										<div className="flex flex-col gap-2">
+											<SheetClose asChild>
+												<Link
+													to="/my-events"
+													onClick={() => setIsOpen(false)}
+													className="ml-2 font-medium"
+												>
+													My Events
+												</Link>
+											</SheetClose>
+											<SheetClose asChild>
+												<Link
+													to="/my-participation-events"
+													onClick={() => setIsOpen(false)}
+													className="ml-2 font-medium"
+												>
+													My Participation Events
+												</Link>
+											</SheetClose>
+										</div>
 										<Separator className="mt-3" />
 										<div className="p-2 flex items-center">
 											<Avatar className="h-10 w-10 mr-3">
