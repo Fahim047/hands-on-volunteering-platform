@@ -3,6 +3,7 @@ import EventManageCard from '@/components/events/EventManageCard';
 import { Button } from '@/components/ui/button';
 import { deleteEvent, getMyEvents } from '@/lib/queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -80,7 +81,9 @@ const MyEventsPage = () => {
 			<div className="flex items-center justify-between mb-8">
 				<h1 className="text-3xl font-bold mb-4">My Events</h1>
 				{/* Create Event Button */}
-				<Button onClick={handleCreate}>Create Event</Button>
+				<Button onClick={handleCreate}>
+					<Plus className="size-4" /> Create Event
+				</Button>
 			</div>
 			{myEvents.length === 0 ? (
 				<p className="text-gray-500">No events created yet.</p>

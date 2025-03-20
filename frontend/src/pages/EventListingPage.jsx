@@ -15,7 +15,7 @@ import { joinEvent } from '@/lib/queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { format } from 'date-fns';
-import { FilterX } from 'lucide-react';
+import { FilterX, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
@@ -98,6 +98,7 @@ export default function EventListingPage() {
 					className="border-indigo-500 cursor-pointer"
 					onClick={() => navigate('/events/create')}
 				>
+					<Plus className="size-4" />
 					Create an event
 				</Button>
 			</div>

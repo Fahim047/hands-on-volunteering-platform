@@ -12,7 +12,10 @@ const EventCard = ({
 		<div className="bg-white rounded-lg shadow-md overflow-hidden">
 			<div className="relative">
 				<img
-					src={event.image || 'https://placehold.co/400x300'}
+					src={
+						event.thumbnail ||
+						'https://placehold.co/400x300?text=No+Thumbnail+Available'
+					}
 					alt={event.title}
 					className="w-full h-48 object-cover"
 				/>

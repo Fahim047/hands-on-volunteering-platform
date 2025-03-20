@@ -11,7 +11,7 @@ const EventManageCard = ({ event, onEdit, onDelete }) => {
 			{/* Event Image */}
 			<div className="relative">
 				<img
-					src={event.image || 'https://placehold.co/400x300'}
+					src={event.thumbnail || 'https://placehold.co/400x300?text=No+Image'}
 					alt={event.title}
 					className="w-full h-48 object-cover"
 				/>
