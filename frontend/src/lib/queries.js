@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const user = localStorage.getItem('user');
-const token = JSON.parse(user).token;
+const token = JSON.parse(user)?.token;
 
 export const createEvent = async (data) => {
 	const response = await axios.post(`${API_BASE_URL}/events`, data, {

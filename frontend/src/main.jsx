@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router';
+import PrivateRoute from './components/auth/PrivateRoute';
 import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
 import './index.css';
@@ -31,20 +32,45 @@ createRoot(document.getElementById('root')).render(
 							<Route index element={<HomePage />} />
 							<Route path="sign-in" element={<SignIn />} />
 							<Route path="sign-up" element={<SignUp />} />
-							<Route path="profile" element={<ProfileDashboard />}>
+							<Route
+								path="profile"
+								element={
+									<PrivateRoute>
+										<ProfileDashboard />
+									</PrivateRoute>
+								}
+							>
 								<Route index element={<Profile />} />
 								<Route path="edit" element={<EditProfile />} />
 								<Route path="history" element={<VolunteerHistory />} />
 								<Route path="impact" element={<h1>impact</h1>} />
 								<Route path="*" element={<h1>404</h1>} />
 							</Route>
-							<Route path="my-events" element={<MyEventsPage />} />
+							<Route
+								path="my-events"
+								element={
+									<PrivateRoute>
+										<MyEventsPage />
+									</PrivateRoute>
+								}
+							/>
 							<Route
 								path="my-participation-events"
-								element={<MyParticipationEvents />}
+								element={
+									<PrivateRoute>
+										<MyParticipationEvents />
+									</PrivateRoute>
+								}
 							/>
 							<Route path="/events" element={<EventListingPage />} />
-							<Route path="/events/create" element={<EventCreationPage />} />
+							<Route
+								path="/events/create"
+								element={
+									<PrivateRoute>
+										<EventCreationPage />
+									</PrivateRoute>
+								}
+							/>
 							<Route path="/help-requests" element={<HelpRequestPage />} />
 							<Route
 								path="/help-requests/:id"
