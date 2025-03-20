@@ -157,3 +157,17 @@ export const getMyEvents = asyncHandler(async (req, res, next) => {
 		data: processedEvents,
 	});
 });
+export const getUpcomingEvents = asyncHandler(async (req, res, next) => {
+	const today = new Date(); // Get current date
+
+	const events = await Event.find({ date: { $gte: today } })
+		.sort({ date: 1 })
+		.populate('author', 'name')
+		.lean();
+
+	return res.status(200).json({
+		status: true,
+		message: 'Upcoming events fetched successfully',
+		data: removeMongoDBIdFromArray(events),
+	});
+});

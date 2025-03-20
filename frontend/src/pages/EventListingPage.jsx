@@ -79,7 +79,9 @@ export default function EventListingPage() {
 			(event) =>
 				event.title.toLowerCase().includes(search.toLowerCase()) &&
 				(category && category !== 'all' ? event.category === category : true) &&
-				(location ? event.location.includes(location) : true) &&
+				(location
+					? event.location.toLowerCase().includes(location.toLowerCase())
+					: true) &&
 				(date ? event.date === format(date, 'yyyy-MM-dd') : true)
 		) || [];
 
@@ -154,15 +156,23 @@ export default function EventListingPage() {
 			</Card>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-				{filteredEvents.map((event) => (
-					<EventCard
-						key={event.id}
-						event={event}
-						isJoining={isJoining}
-						onJoin={handleJoin}
-						alreadyJoined={event?.attendees?.includes(user?._id)}
-					/>
-				))}
+				{filteredEvents.length > 0 ? (
+					filteredEvents.map((event) => (
+						<EventCard
+							key={event.id}
+							event={event}
+							isJoining={isJoining}
+							onJoin={handleJoin}
+							alreadyJoined={event?.attendees?.includes(user?._id)}
+						/>
+					))
+				) : (
+					<div className="col-span-full text-center text-gray-500 p-6">
+						<p className="text-lg">
+							😞 No events found. Try adjusting your filters.
+						</p>
+					</div>
+				)}
 			</div>
 		</div>
 	);
