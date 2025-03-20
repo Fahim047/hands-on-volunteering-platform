@@ -13,6 +13,7 @@ import './index.css';
 import MainLayout from './layouts/MainLayout';
 import HelpRequestDetailsPage from './pages/HelpRequestDetailsPage';
 import MyEventsPage from './pages/MyEventsPage';
+import MyParticipationEvents from './pages/MyParticipationEvents';
 import AuthProvider from './providers/AuthProvider';
 
 const queryClient = new QueryClient();
@@ -29,6 +30,10 @@ createRoot(document.getElementById('root')).render(
 							<Route path="sign-up" element={<SignUp />} />
 							<Route path="profile" element={<ProfileManagement />} />
 							<Route path="my-events" element={<MyEventsPage />} />
+							<Route
+								path="my-participation-events"
+								element={<MyParticipationEvents />}
+							/>
 							<Route path="/events" element={<EventListingPage />} />
 							<Route path="/events/create" element={<EventCreationPage />} />
 							<Route path="/help-requests" element={<HelpRequestPage />} />

@@ -108,7 +108,14 @@ export const deleteEvent = asyncHandler(async (req, res, next) => {
 });
 
 export const getEvents = asyncHandler(async (req, res, next) => {
-	const events = await Event.find().select('-__v').lean();
+	const { attendee } = req.query; // Get attendee ID from query params
+
+	const filter = attendee ? { attendees: attendee } : {}; // Filter by attendee if provided
+
+	const events = await Event.find(filter)
+		.select('-__v')
+		.populate('author', 'name')
+		.lean();
 
 	const processedEvents = removeMongoDBIdFromArray(events);
 

@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
-import { CalendarIcon, Clock, MapPin } from 'lucide-react';
+import { CalendarIcon, Clock, MapPin, User } from 'lucide-react';
+import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 
 const EventCard = ({
@@ -8,8 +9,17 @@ const EventCard = ({
 	isJoining = false,
 	alreadyJoined = false,
 }) => {
+	const categoryColor =
+		event.category === 'Environment'
+			? '#2E7D32'
+			: event.category === 'Education'
+			? '#1976D2'
+			: event.category === 'Healthcare'
+			? '#D32F2F'
+			: '#6D6D6D';
+
 	return (
-		<div className="bg-white rounded-lg shadow-md overflow-hidden">
+		<div className="bg-white rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:scale-[1.02]">
 			<div className="relative">
 				<img
 					src={
@@ -17,61 +27,70 @@ const EventCard = ({
 						'https://placehold.co/400x300?text=No+Thumbnail+Available'
 					}
 					alt={event.title}
-					className="w-full h-48 object-cover"
+					className="w-full h-52 object-cover"
 				/>
+				{/* Gradient Overlay */}
+				<div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+				{/* Category Badge */}
 				<div className="absolute top-2 right-2">
-					<span
-						className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-            ${
-							event.category === 'Environment'
-								? 'bg-green-100 text-green-800'
-								: event.category === 'Education'
-								? 'bg-blue-100 text-blue-800'
-								: event.category === 'Healthcare'
-								? 'bg-red-100 text-red-800'
-								: 'bg-gray-100 text-gray-800'
-						}`}
-					>
+					<Badge style={{ backgroundColor: categoryColor }}>
 						{event.category}
-					</span>
+					</Badge>
 				</div>
 			</div>
-			<div className="p-4">
-				<h3 className="text-lg font-semibold text-gray-900 mb-1">
-					{event.title}
-				</h3>
-				<p className="text-sm text-gray-500 mb-3">
-					<span className="flex items-center">
-						<CalendarIcon className="size-5 mr-1" />
+
+			<div className="p-5 space-y-2">
+				{/* Title */}
+				<h3 className="text-lg font-semibold text-gray-900">{event.title}</h3>
+
+				{/* Organizer Info */}
+				<div className="flex items-center gap-2 text-sm text-gray-500">
+					<User className="size-4" />
+					<span className="font-medium">
+						{event.author?.name || 'Unknown Organizer'}
+					</span>
+				</div>
+
+				{/* Event Details */}
+				<div className="flex flex-col gap-2 text-sm text-gray-500">
+					<div className="flex items-center gap-1">
+						<CalendarIcon className="size-5 text-gray-600" />
 						<span>{format(new Date(event.date), 'PPP')}</span>
-					</span>
-				</p>
-				<p className="text-sm text-gray-500 mb-3">
-					<span className="flex items-center">
-						<Clock className="size-5 mr-1" />
+					</div>
+					<div className="flex items-center gap-1">
+						<Clock className="size-5 text-gray-600" />
 						<span>{`${event.startTime} - ${event.endTime}`}</span>
-					</span>
-				</p>
-				<p className="text-sm text-gray-500 mb-3">
-					<span className="flex items-center">
-						<MapPin className="size-5 mr-1" />
-						{event.location}
-					</span>
-				</p>
-				<p className="text-sm text-gray-600 mb-4 line-clamp-2">
+					</div>
+					<div className="flex items-center gap-1">
+						<MapPin className="size-5 text-gray-600" />
+						<span>{event.location}</span>
+					</div>
+					{/* Attendees Count (Moved here) */}
+					<div className="flex items-center gap-1">
+						<User className="size-5 text-gray-600" />
+						<span>
+							<strong>{event?.attendees?.length || 0}</strong> persons attending
+						</span>
+					</div>
+				</div>
+
+				{/* Description */}
+				<p className="text-sm text-gray-600 line-clamp-2">
 					{event.description}
 				</p>
-				<div className="flex flex-col gap-2">
-					<div className="text-sm text-gray-500">
-						<span className="font-medium">{event?.attendees?.length || 0}</span>{' '}
-						volunteers
-					</div>
+
+				{/* Action Buttons */}
+				<div className="mt-4">
 					{alreadyJoined ? (
-						<Button variant="outline" disabled>
+						<Button variant="outline" className="w-full" disabled>
 							✅ Already Joined
 						</Button>
 					) : (
-						<Button onClick={() => onJoin(event.id)} disabled={isJoining}>
+						<Button
+							className="w-full"
+							onClick={() => onJoin(event.id)}
+							disabled={isJoining}
+						>
 							{isJoining ? 'Joining...' : 'Join Event'}
 						</Button>
 					)}
