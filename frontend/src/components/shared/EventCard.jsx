@@ -17,7 +17,10 @@ const EventCard = ({ event }) => {
 			<CardHeader className="relative bg-indigo-500 text-white py-5 px-6">
 				{/* Add the image here */}
 				<img
-					src={event.image || 'https://placehold.co/400x300'} // Assuming 'event.image' is the URL of the event image
+					src={
+						event.thumbnail ||
+						'https://placehold.co/400x300?text=No+Thumbnail+Available'
+					} // Assuming 'event.image' is the URL of the event image
 					alt="Event"
 					className="w-full h-40 object-cover rounded-lg mb-4"
 				/>

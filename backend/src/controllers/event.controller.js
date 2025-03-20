@@ -17,10 +17,12 @@ export const createEvent = asyncHandler(async (req, res, next) => {
 		category,
 		author,
 		location,
+		thumbnail,
 	} = req.body;
 	if (
 		!title ||
 		!description ||
+		!thumbnail ||
 		!date ||
 		!startTime ||
 		!endTime ||
@@ -36,6 +38,7 @@ export const createEvent = asyncHandler(async (req, res, next) => {
 		author,
 		title,
 		description,
+		thumbnail,
 		date,
 		startTime,
 		endTime,
@@ -52,8 +55,16 @@ export const createEvent = asyncHandler(async (req, res, next) => {
 });
 export const updateEvent = asyncHandler(async (req, res, next) => {
 	const id = req.params?.id;
-	const { title, description, date, startTime, endTime, category, location } =
-		req.body;
+	const {
+		title,
+		description,
+		date,
+		startTime,
+		endTime,
+		category,
+		location,
+		thumbnail,
+	} = req.body;
 
 	// Check if event exists
 	const event = await Event.findById(id);
@@ -66,6 +77,7 @@ export const updateEvent = asyncHandler(async (req, res, next) => {
 	// Update fields only if they are provided in request
 	if (title) event.title = title;
 	if (description) event.description = description;
+	if (thumbnail) event.thumbnail = thumbnail;
 	if (date) event.date = date;
 	if (startTime) event.startTime = startTime;
 	if (endTime) event.endTime = endTime;

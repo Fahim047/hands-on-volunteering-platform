@@ -55,6 +55,7 @@ export default function EventDialog({ open, onClose, eventData }) {
 		defaultValues: {
 			title: '',
 			description: '',
+			thumbnail: '',
 			category: '',
 			location: '',
 			date: undefined,
@@ -96,6 +97,7 @@ export default function EventDialog({ open, onClose, eventData }) {
 			form.reset({
 				title: '',
 				description: '',
+				thumbnail: '',
 				category: '',
 				location: '',
 				date: undefined,
@@ -157,6 +159,32 @@ export default function EventDialog({ open, onClose, eventData }) {
 								</FormItem>
 							)}
 						/>
+						<FormField
+							control={form.control}
+							name="thumbnail"
+							rules={{
+								required: 'Thumbnail URL is required',
+								pattern: {
+									value: /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))$/i,
+									message:
+										'Enter a valid image URL (png, jpg, jpeg, gif, webp)',
+								},
+							}}
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Thumbnail URL</FormLabel>
+									<FormControl>
+										<Input
+											type="url"
+											placeholder="Enter image URL"
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
 						<div className="flex gap-4">
 							{/* Category */}
 							<div className="w-1/2">

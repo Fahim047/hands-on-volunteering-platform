@@ -48,6 +48,7 @@ export default function EventCreationPage() {
 		defaultValues: {
 			title: '',
 			description: '',
+			thumbnail: '',
 			date: undefined,
 			startTime: '',
 			endTime: '',
@@ -132,6 +133,32 @@ export default function EventCreationPage() {
 								</FormItem>
 							)}
 						/>
+						<FormField
+							control={form.control}
+							name="thumbnail"
+							rules={{
+								required: 'Thumbnail URL is required',
+								pattern: {
+									value: /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))$/i,
+									message:
+										'Enter a valid image URL (png, jpg, jpeg, gif, webp)',
+								},
+							}}
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Thumbnail URL</FormLabel>
+									<FormControl>
+										<Input
+											type="url"
+											placeholder="Enter image URL"
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
 						<div className="flex gap-4">
 							{/* Category */}
 							<div className="w-1/2">
