@@ -22,18 +22,24 @@ export const signIn = async (req, res, next) => {
 		const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
 			expiresIn: JWT_EXPIRES_IN,
 		});
+
+		// Convert to Object and remove password
+		const userWithoutPassword = user.toObject();
+		delete userWithoutPassword.password;
+
 		res.status(200).json({
 			success: true,
 			message: 'User signed in successfully',
 			data: {
 				token,
-				user,
+				user: userWithoutPassword,
 			},
 		});
 	} catch (error) {
 		next(error);
 	}
 };
+
 export const signUp = async (req, res, next) => {
 	const session = await mongoose.startSession();
 	session.startTransaction();
@@ -69,12 +75,16 @@ export const signUp = async (req, res, next) => {
 		await session.commitTransaction();
 		session.endSession();
 
+		// Convert to Object and remove password
+		const userWithoutPassword = newUsers[0].toObject();
+		delete userWithoutPassword.password;
+
 		res.status(201).json({
 			success: true,
 			message: 'User created successfully',
 			data: {
 				token,
-				user: newUsers[0],
+				user: userWithoutPassword,
 			},
 		});
 	} catch (error) {
