@@ -1,43 +1,50 @@
+import VolunteerEventCard from '@/components/events/VounteerEventCard';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useAuth } from '@/hooks';
+import { getParticipationEvents } from '@/lib/queries';
 import { useQuery } from '@tanstack/react-query';
 
 const VolunteerHistory = () => {
+	const { user } = useAuth();
 	const {
 		data: volunteerHistory,
 		isPending,
 		isError,
 	} = useQuery({
 		queryKey: ['volunteerHistory'],
-		queryFn: async () => [],
+		queryFn: () => getParticipationEvents(user._id),
 	});
+
 	return (
 		<Card className="shadow-lg">
 			<CardContent className="p-6">
-				<h2 className="text-xl font-semibold mb-4">Volunteer History</h2>
-				{isPending ? (
-					<p>Loading...</p>
-				) : isError ? (
-					<p>Error loading data.</p>
-				) : (
-					<table className="w-full border-collapse border">
-						<thead>
-							<tr className="bg-gray-100">
-								<th className="p-3 border">Event</th>
-								<th className="p-3 border">Date</th>
-								<th className="p-3 border">Role</th>
-							</tr>
-						</thead>
-						<tbody>
-							{volunteerHistory.map((entry, idx) => (
-								<tr key={idx} className="text-center">
-									<td className="p-3 border">{entry.event}</td>
-									<td className="p-3 border">{entry.date}</td>
-									<td className="p-3 border">{entry.role}</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
+				<h2 className="text-2xl font-bold mb-12 text-center">
+					Volunteer History
+				</h2>
+				{isPending && (
+					<div className="space-y-4">
+						<Skeleton className="h-40 w-full" />
+						<Skeleton className="h-6 w-1/2" />
+						<Skeleton className="h-6 w-1/3" />
+					</div>
 				)}
+
+				{isError && (
+					<p className="text-red-500 text-center">Failed to load events.</p>
+				)}
+
+				{!isPending && !isError && volunteerHistory?.length === 0 && (
+					<p className="text-center text-gray-500">
+						No past volunteer events found.
+					</p>
+				)}
+
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					{volunteerHistory?.map((event) => (
+						<VolunteerEventCard key={event._id} event={event} />
+					))}
+				</div>
 			</CardContent>
 		</Card>
 	);

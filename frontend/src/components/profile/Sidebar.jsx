@@ -10,14 +10,24 @@ export default function Sidebar() {
 			<nav className="space-y-4">
 				{/* Profile Link */}
 				<Link
-					to="/profile/edit-profile"
+					to="/profile"
 					className={`flex items-center gap-2 w-full px-4 py-2 rounded-lg ${
-						location.pathname === '/profile/edit-profile'
+						location.pathname === '/profile'
 							? 'bg-indigo-100 text-indigo-600'
 							: 'hover:bg-gray-200'
 					}`}
 				>
 					<User className="w-5 h-5" /> Profile
+				</Link>
+				<Link
+					to="/profile/edit"
+					className={`flex items-center gap-2 w-full px-4 py-2 rounded-lg ${
+						location.pathname === '/profile/edit'
+							? 'bg-indigo-100 text-indigo-600'
+							: 'hover:bg-gray-200'
+					}`}
+				>
+					<User className="w-5 h-5" /> Edit Profile
 				</Link>
 
 				{/* Volunteer History Link */}

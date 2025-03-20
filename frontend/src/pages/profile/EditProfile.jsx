@@ -1,139 +1,212 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Camera, Pencil, Save, User } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/hooks';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
-export default function EditProfile() {
-	const [editMode, setEditMode] = useState(false);
-	const [activeTab, setActiveTab] = useState('profile');
-	const [user, setUser] = useState({
-		name: 'John Doe',
-		email: 'johndoe@example.com',
-		skills: 'Teaching, Organizing',
-		interests: 'Education, Environment',
-		points: 120,
-		avatar: null,
+const interestsOptions = [
+	'Environment',
+	'Education',
+	'Healthcare',
+	'Animal Welfare',
+	'Community Development',
+];
+
+const EditProfile = () => {
+	const navigate = useNavigate();
+	const { user } = useAuth();
+
+	// Set initial values for form
+	const form = useForm({
+		defaultValues: {
+			name: '',
+			skills: '',
+			interests: [],
+			avatar: '', // New field for Avatar URL
+		},
+		mode: 'onSubmit', // validate on submit
 	});
-	const [avatar, setAvatar] = useState(null);
-	const [previewUrl, setPreviewUrl] = useState(null);
-	const fileInputRef = useRef(null);
 
-	const handleChange = (e) => {
-		setUser({ ...user, [e.target.name]: e.target.value });
+	const watchedInterests = form.watch('interests') || [];
+
+	// TanStack Query mutation
+	const { mutate, isPending } = useMutation({
+		mutationFn: () => toast.info('Not implemented yet!'),
+	});
+
+	const onSubmit = (data) => {
+		mutate(data);
 	};
-
-	const handleFileChange = (e) => {
-		const file = e.target.files[0];
-		if (file) {
-			if (!file.type.startsWith('image/')) {
-				toast.error('Please select an image file');
-				return;
-			}
-			if (file.size > 2 * 1024 * 1024) {
-				toast.error('Image size should be less than 2MB');
-				return;
-			}
-			setAvatar(file);
-			const reader = new FileReader();
-			reader.onload = () => {
-				setPreviewUrl(reader.result);
-			};
-			reader.readAsDataURL(file);
+	useEffect(() => {
+		if (user) {
+			form.reset({
+				name: user.name || '',
+				skills: user.skills || '',
+				interests: user.interests || [],
+				avatar: user.avatar || 'https://placehold.co/400x400?text=No+Avatar',
+			});
 		}
-	};
-
-	const handleSave = () => {
-		setUser((prev) => ({
-			...prev,
-			avatar: previewUrl || prev.avatar,
-		}));
-		setEditMode(false);
-		toast.success('Profile updated successfully!');
-	};
-
-	const removeAvatar = () => {
-		setAvatar(null);
-		setPreviewUrl(null);
-		fileInputRef.current.value = '';
-	};
-
-	const triggerFileInput = () => {
-		fileInputRef.current.click();
-	};
+	}, [user, form]);
 
 	return (
-		<main className="flex-1">
-			<Card className="shadow-lg">
-				<div className="flex justify-between items-center p-6 border-b">
-					<h2 className="text-2xl font-semibold">Profile Management</h2>
-					<Button onClick={editMode ? handleSave : () => setEditMode(true)}>
-						{editMode ? (
-							<Save className="w-4 h-4 mr-2" />
-						) : (
-							<Pencil className="w-4 h-4 mr-2" />
-						)}
-						{editMode ? 'Save' : 'Edit'}
+		<Card className="w-full shadow-lg">
+			<CardHeader className="space-y-1">
+				<CardTitle className="text-2xl font-bold text-center">
+					Edit Profile
+				</CardTitle>
+				<CardDescription className="text-center">
+					Update your profile information
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+						<FormField
+							control={form.control}
+							name="name"
+							rules={{ required: 'Full name is required' }}
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Full Name</FormLabel>
+									<FormControl>
+										<Input placeholder="John Doe" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="skills"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Skills</FormLabel>
+									<FormControl>
+										<Input
+											placeholder="JavaScript, React, UI Design"
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						{/* Avatar URL Input */}
+						<FormField
+							control={form.control}
+							name="avatar"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Avatar URL</FormLabel>
+									<FormControl>
+										<Input
+											placeholder="https://example.com/avatar.jpg"
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						{/* Interests - Multi-Select Checkboxes */}
+						<FormField
+							control={form.control}
+							name="interests"
+							rules={{
+								validate: (value) =>
+									value.length > 0 || 'Select at least one interest',
+							}}
+							render={() => (
+								<FormItem className="space-y-3">
+									<FormLabel className="text-base">Select Interests</FormLabel>
+									<FormMessage />
+									<div className="grid grid-cols-2 gap-2">
+										{interestsOptions.map((interest) => (
+											<div
+												key={interest}
+												className="flex items-center space-x-2"
+											>
+												<Checkbox
+													className="data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500"
+													id={`interest-${interest}`}
+													checked={watchedInterests.includes(interest)}
+													onCheckedChange={(checked) => {
+														const currentInterests = [...watchedInterests];
+														if (checked) {
+															form.setValue('interests', [
+																...currentInterests,
+																interest,
+															]);
+														} else {
+															form.setValue(
+																'interests',
+																currentInterests.filter((i) => i !== interest)
+															);
+														}
+													}}
+												/>
+												<Label
+													htmlFor={`interest-${interest}`}
+													className="text-sm font-medium"
+												>
+													{interest}
+												</Label>
+											</div>
+										))}
+									</div>
+								</FormItem>
+							)}
+						/>
+
+						<Button
+							type="submit"
+							className="w-full bg-indigo-600 hover:bg-indigo-700"
+							disabled={isPending}
+						>
+							{isPending ? 'Updating Profile...' : 'Save Changes'}
+						</Button>
+					</form>
+				</Form>
+			</CardContent>
+			<Separator />
+			<CardFooter className="flex justify-center p-4">
+				<div className="text-sm text-slate-600">
+					<Button
+						variant="link"
+						className="p-0 h-auto font-medium cursor-pointer"
+						onClick={() => navigate('/profile')}
+					>
+						Go to Profile
 					</Button>
 				</div>
-				<CardContent className="p-6">
-					<div className="flex items-center gap-6">
-						{/* Avatar */}
-						<div className="relative">
-							<div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100 border flex items-center justify-center">
-								{previewUrl || user.avatar ? (
-									<img
-										src={previewUrl || user.avatar}
-										alt="Profile"
-										className="w-full h-full object-cover"
-									/>
-								) : (
-									<User className="w-16 h-16 text-gray-400" />
-								)}
-							</div>
-							{editMode && (
-								<Button
-									size="sm"
-									className="absolute bottom-0 right-0 rounded-full p-2 bg-indigo-600 hover:bg-indigo-700 text-white"
-									onClick={triggerFileInput}
-								>
-									<Camera className="w-4 h-4" />
-								</Button>
-							)}
-						</div>
-
-						{/* Profile Info */}
-						<div className="flex-1 space-y-4">
-							<Input
-								name="name"
-								value={user.name}
-								onChange={handleChange}
-								disabled={!editMode}
-							/>
-							<Input
-								name="email"
-								value={user.email}
-								disabled
-								className="bg-gray-50"
-							/>
-							<Textarea
-								name="skills"
-								value={user.skills}
-								onChange={handleChange}
-								disabled={!editMode}
-							/>
-							<Textarea
-								name="interests"
-								value={user.interests}
-								onChange={handleChange}
-								disabled={!editMode}
-							/>
-						</div>
-					</div>
-				</CardContent>
-			</Card>
-		</main>
+			</CardFooter>
+		</Card>
 	);
-}
+};
+
+export default EditProfile;

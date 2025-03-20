@@ -15,6 +15,7 @@ import HelpRequestDetailsPage from './pages/HelpRequestDetailsPage';
 import MyEventsPage from './pages/MyEventsPage';
 import MyParticipationEvents from './pages/MyParticipationEvents';
 import EditProfile from './pages/profile/EditProfile';
+import Profile from './pages/profile/Profile';
 import VolunteerHistory from './pages/profile/VolunteerHistory';
 import AuthProvider from './providers/AuthProvider';
 
@@ -31,8 +32,8 @@ createRoot(document.getElementById('root')).render(
 							<Route path="sign-in" element={<SignIn />} />
 							<Route path="sign-up" element={<SignUp />} />
 							<Route path="profile" element={<ProfileDashboard />}>
-								<Route index element={<EditProfile />} />
-								<Route path="edit-profile" element={<EditProfile />} />
+								<Route index element={<Profile />} />
+								<Route path="edit" element={<EditProfile />} />
 								<Route path="history" element={<VolunteerHistory />} />
 								<Route path="impact" element={<h1>impact</h1>} />
 								<Route path="*" element={<h1>404</h1>} />
