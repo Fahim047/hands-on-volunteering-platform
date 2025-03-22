@@ -17,12 +17,13 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks';
 import { getHelpRequests, postHelpRequest } from '@/lib/queries';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 const urgencyLevels = [
+	{ value: 'all', label: '🌍 All' },
 	{ value: 'low', label: '🟢 Low' },
 	{ value: 'medium', label: '🟡 Medium' },
 	{ value: 'urgent', label: '🔴 Urgent' },
@@ -30,26 +31,13 @@ const urgencyLevels = [
 
 export default function HelpRequestPage() {
 	const { user } = useAuth();
-	const [isLoading, setIsLoading] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [selectedUrgency, setSelectedUrgency] = useState('all'); // Filter State
+	const queryClient = useQueryClient();
 
-	// React Hook Form setup
+	// Fetch help requests
 	const {
-		register,
-		handleSubmit,
-		control,
-		reset,
-		formState: { errors },
-	} = useForm({
-		defaultValues: {
-			title: '',
-			description: '',
-			urgency: '',
-		},
-	});
-
-	const {
-		data: requests,
+		data: requests = [],
 		isPending,
 		isError,
 	} = useQuery({
@@ -57,47 +45,50 @@ export default function HelpRequestPage() {
 		queryFn: getHelpRequests,
 	});
 
-	// Simulate posting a new help request
-	const postRequest = async (data) => {
-		setIsLoading(true);
-		try {
-			const newRequest = {
-				...data,
-				author: user._id,
-			};
-			const response = await postHelpRequest(newRequest);
-			if (response.status) {
-				toast.success(response.message || 'Request posted successfully!');
-				reset();
-				setIsModalOpen(false);
-			}
-		} catch (error) {
-			console.error('Error posting request:', error);
-			toast.error('Something went wrong!');
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	// Mutation to post a new request
+	const { mutate: createHelpRequest, isPending: isPosting } = useMutation({
+		mutationFn: async (data) => postHelpRequest({ ...data, author: user._id }),
+		onSuccess: (response) => {
+			toast.success(response.message || 'Request posted successfully!');
+			queryClient.invalidateQueries(['help-requests']);
+			reset();
+			setIsModalOpen(false);
+		},
+		onError: () => toast.error('Something went wrong!'),
+	});
 
-	if (isPending) {
-		return <div>Loading...</div>;
-	}
-	if (isError) {
-		return <div>Error</div>;
-	}
+	// Form setup
+	const {
+		register,
+		handleSubmit,
+		control,
+		reset,
+		formState: { errors },
+	} = useForm({ defaultValues: { title: '', description: '', urgency: '' } });
+
+	// Handle form submission
+	const onSubmit = (data) => createHelpRequest(data);
+
+	// Apply filtering logic
+	const filteredRequests =
+		selectedUrgency === 'all'
+			? requests
+			: requests.filter((req) => req.urgency === selectedUrgency);
+
+	if (isPending) return <div>Loading...</div>;
+	if (isError) return <div>Error loading requests.</div>;
 
 	return (
 		<div className="max-w-4xl mx-auto p-6">
 			<h1 className="text-3xl font-bold mb-6">Community Help Requests</h1>
 
 			<div className="flex items-center justify-between mb-6">
-				{/* Filter Dropdown (No Functionality) */}
-				<Select>
+				{/* Urgency Filter */}
+				<Select onValueChange={setSelectedUrgency} value={selectedUrgency}>
 					<SelectTrigger className="w-40">
 						<SelectValue placeholder="Filter by Urgency" />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem value="all">All</SelectItem>
 						{urgencyLevels.map((level) => (
 							<SelectItem key={level.value} value={level.value}>
 								{level.label}
@@ -111,14 +102,14 @@ export default function HelpRequestPage() {
 			</div>
 
 			{/* Help Requests List */}
-			{isLoading ? (
-				<p>Loading requests...</p>
-			) : (
+			{filteredRequests.length > 0 ? (
 				<div className="space-y-4">
-					{requests.map((req) => (
+					{filteredRequests.map((req) => (
 						<HelpRequestCard request={req} key={req.id} />
 					))}
 				</div>
+			) : (
+				<p className="text-gray-500">No matching help requests found.</p>
 			)}
 
 			{/* Modal for Posting Requests */}
@@ -127,7 +118,7 @@ export default function HelpRequestPage() {
 					<DialogHeader>
 						<DialogTitle>Post a New Help Request</DialogTitle>
 					</DialogHeader>
-					<form onSubmit={handleSubmit(postRequest)} className="space-y-4">
+					<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 						<div className="space-y-2">
 							<label htmlFor="title" className="text-sm font-medium">
 								Title
@@ -165,7 +156,6 @@ export default function HelpRequestPage() {
 							<label htmlFor="urgency" className="text-sm font-medium">
 								Urgency Level
 							</label>
-							{/* Use Controller for Select */}
 							<Controller
 								name="urgency"
 								control={control}
@@ -176,11 +166,15 @@ export default function HelpRequestPage() {
 											<SelectValue placeholder="Select Urgency" />
 										</SelectTrigger>
 										<SelectContent>
-											{urgencyLevels.map((level) => (
-												<SelectItem key={level.value} value={level.value}>
-													{level.label}
-												</SelectItem>
-											))}
+											{urgencyLevels.slice(1).map(
+												(
+													level // Exclude "All" from request form
+												) => (
+													<SelectItem key={level.value} value={level.value}>
+														{level.label}
+													</SelectItem>
+												)
+											)}
 										</SelectContent>
 									</Select>
 								)}
@@ -190,8 +184,8 @@ export default function HelpRequestPage() {
 							)}
 						</div>
 
-						<Button type="submit" disabled={isLoading} className="w-full">
-							{isLoading ? 'Posting...' : 'Submit Request'}
+						<Button type="submit" disabled={isPosting} className="w-full">
+							{isPosting ? 'Posting...' : 'Submit Request'}
 						</Button>
 					</form>
 				</DialogContent>
