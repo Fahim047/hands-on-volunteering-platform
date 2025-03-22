@@ -4,6 +4,12 @@
 
 HandsOn is a web application that helps users to manage volunteers, events, and participation records efficiently. Users can sign up, participate in events, and track their contributions, and also can create, edit, and manage events.
 
+## Live Preview
+
+The project is hosted on vercel.
+
+[HandsOn: Volunteering Platform](https://hands-on-volunteering-platform-frontend.vercel.app/)
+
 ## 🛠 Technologies Used
 
 - **Frontend:** React.js, Tailwind CSS, React Hook Form, React Query
