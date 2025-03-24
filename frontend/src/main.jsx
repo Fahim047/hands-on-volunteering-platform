@@ -10,6 +10,7 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import PrivateRoute from './components/auth/PrivateRoute';
 import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
+import NotFoundPage from './components/shared/NotFoundPage';
 import './index.css';
 import MainLayout from './layouts/MainLayout';
 import HelpRequestDetailsPage from './pages/HelpRequestDetailsPage';
@@ -44,7 +45,7 @@ createRoot(document.getElementById('root')).render(
 								<Route path="edit" element={<EditProfile />} />
 								<Route path="history" element={<VolunteerHistory />} />
 								<Route path="impact" element={<h1>impact</h1>} />
-								<Route path="*" element={<h1>404</h1>} />
+								<Route path="*" element={<NotFoundPage />} />
 							</Route>
 							<Route
 								path="my-events"
@@ -76,7 +77,7 @@ createRoot(document.getElementById('root')).render(
 								path="/help-requests/:id"
 								element={<HelpRequestDetailsPage />}
 							/>
-							<Route path="*" element={<h1>404</h1>} />
+							<Route path="*" element={<NotFoundPage />} />
 						</Route>
 					</Routes>
 				</BrowserRouter>

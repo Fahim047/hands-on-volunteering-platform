@@ -1,3 +1,4 @@
+import LoadingComponent from '@/components/shared/LoadingComponent';
 import { AuthContext } from '@/contexts';
 import { useStorage } from '@/hooks';
 import { useEffect, useMemo, useState } from 'react';
@@ -30,7 +31,7 @@ const AuthProvider = ({ children }) => {
 	}, [user, setUser]);
 
 	if (loading) {
-		return <div>Loading...</div>;
+		return <LoadingComponent />;
 	}
 
 	if (error) {
