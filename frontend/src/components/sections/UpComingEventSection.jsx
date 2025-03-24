@@ -1,6 +1,7 @@
 import { useAuth } from '@/hooks';
 import { getUpcomingEvents, joinEvent } from '@/lib/queries'; // Import joinEvent
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Loader } from 'lucide-react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
 import EventCard from '../events/EventCard';
@@ -40,7 +41,12 @@ const UpComingEventSection = () => {
 		},
 	});
 
-	if (isPending) return <div>Loading...</div>;
+	if (isPending)
+		return (
+			<div className="h-60 flex justify-center items-center">
+				<Loader size={40} className="animate-spin" />
+			</div>
+		);
 	if (isError) return <div>Error loading events</div>;
 
 	return (

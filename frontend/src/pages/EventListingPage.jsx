@@ -1,4 +1,6 @@
 import EventCard from '@/components/events/EventCard';
+import ErrorComponent from '@/components/shared/ErrorComponent';
+import LoadingSkeleton from '@/components/shared/LoadingSkeleton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -88,9 +90,6 @@ export default function EventListingPage() {
 	const isFiltering =
 		search !== '' || category !== '' || location !== '' || date !== undefined;
 
-	if (isPending) return <div>Loading...</div>;
-	if (isError) return <div>Error</div>;
-
 	return (
 		<div className="max-w-5xl mx-auto p-6">
 			<div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-6 gap-4">
@@ -155,25 +154,30 @@ export default function EventListingPage() {
 				</CardContent>
 			</Card>
 
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-				{filteredEvents.length > 0 ? (
-					filteredEvents.map((event) => (
-						<EventCard
-							key={event.id}
-							event={event}
-							isJoining={isJoining}
-							onJoin={handleJoin}
-							alreadyJoined={event?.attendees?.includes(user?._id)}
-						/>
-					))
-				) : (
-					<div className="col-span-full text-center text-gray-500 p-6">
-						<p className="text-lg">
-							😞 No events found. Try adjusting your filters.
-						</p>
-					</div>
-				)}
-			</div>
+			{isPending && <LoadingSkeleton />}
+			{isError && <ErrorComponent />}
+
+			{!isPending && !isError && (
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+					{filteredEvents.length > 0 ? (
+						filteredEvents.map((event) => (
+							<EventCard
+								key={event.id}
+								event={event}
+								isJoining={isJoining}
+								onJoin={handleJoin}
+								alreadyJoined={event?.attendees?.includes(user?._id)}
+							/>
+						))
+					) : (
+						<div className="col-span-full text-center text-gray-500 p-6">
+							<p className="text-lg">
+								😞 No events found. Try adjusting your filters.
+							</p>
+						</div>
+					)}
+				</div>
+			)}
 		</div>
 	);
 }

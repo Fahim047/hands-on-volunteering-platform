@@ -1,4 +1,6 @@
 import HelpRequestCard from '@/components/help/HelpRequestCard';
+import ErrorComponent from '@/components/shared/ErrorComponent';
+import LoadingSkeleton from '@/components/shared/LoadingSkeleton';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -40,6 +42,7 @@ export default function HelpRequestPage() {
 		data: requests = [],
 		isPending,
 		isError,
+		refetch,
 	} = useQuery({
 		queryKey: ['help-requests'],
 		queryFn: getHelpRequests,
@@ -75,9 +78,6 @@ export default function HelpRequestPage() {
 			? requests
 			: requests.filter((req) => req.urgency === selectedUrgency);
 
-	if (isPending) return <div>Loading...</div>;
-	if (isError) return <div>Error loading requests.</div>;
-
 	return (
 		<div className="max-w-4xl mx-auto p-6">
 			<h1 className="text-3xl font-bold mb-6">Community Help Requests</h1>
@@ -102,14 +102,23 @@ export default function HelpRequestPage() {
 			</div>
 
 			{/* Help Requests List */}
-			{filteredRequests.length > 0 ? (
+			{/* Loading and Error Handling */}
+			{isPending && <LoadingSkeleton />}
+			{isError && (
+				<ErrorComponent message="Failed to load requests." onRetry={refetch} />
+			)}
+
+			{/* Requests List */}
+			{!isPending && !isError && (
 				<div className="space-y-4">
-					{filteredRequests.map((req) => (
-						<HelpRequestCard request={req} key={req.id} />
-					))}
+					{filteredRequests.length > 0 ? (
+						filteredRequests.map((req) => (
+							<HelpRequestCard request={req} key={req.id} />
+						))
+					) : (
+						<p className="text-gray-500">No matching help requests found.</p>
+					)}
 				</div>
-			) : (
-				<p className="text-gray-500">No matching help requests found.</p>
 			)}
 
 			{/* Modal for Posting Requests */}
